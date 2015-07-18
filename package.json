@@ -1,0 +1,22 @@
+{
+  "name": "ping-pong",
+  "version": "1.0.0",
+  "description": "Ping pong scorekeeper",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mknudsen01/ping-pong.git"
+  },
+  "author": "Matthew Knudsen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mknudsen01/ping-pong/issues"
+  },
+  "homepage": "https://github.com/mknudsen01/ping-pong#readme",
+  "dependencies": {
+    "express": "^4.13.1"
+  }
+}
