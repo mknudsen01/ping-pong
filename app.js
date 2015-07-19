@@ -25,6 +25,13 @@ app.post('/api/score/:player', function(req, res) {
   res.sendStatus(200)
 })
 
+app.post('/api/join/:player', function(req, res) {
+  var player = req.param('player');
+  io.emit('join', { player: player });
+  console.log(player);
+  res.sendStatus(200);
+})
+
 var server = server.listen(process.env.PORT || 3000, function() {
   console.log('App listening at *3000');
 })

@@ -1,14 +1,133 @@
-<body>
-  <h1> hello</h1>
+<head>
+  <style type="text/css">
+    *, *:after, *:before {
+      box-sizing: border-box;
+      content: '';
+    }
+    body {
+      background-color: rgb( 21, 159, 206);
+      font-family: sans-serif;
+      font-size: 0;
+      color: rgb(255, 255, 255);
+      -webkit-font-smoothing: antialiased;
+    }
 
-  <h2>Last player to score: <span id="last-scorer"></h2>
+    h2 {
+      font-size: 60px;
+    }
+
+    .col-1-2 {
+      display: inline-block;
+      width: 50%;
+    }
+
+    .text--center {
+      text-align: center;
+    }
+    .text--uppercase {
+      text-transform: uppercase;
+    }
+
+    .mt--30 {
+      margin-top: 30%;
+    }
+  </style>
+</head>
+<body>
+  <section ui-role="players-and-scores" class="mt--30">
+    <div class="col-1-2">
+      <h2 id="score-1" class="text--center"></h3>
+      <h2 id="player-1" class="text--center text--uppercase"></h2>
+    </div>
+    <div class="col-1-2">
+      <h2 id="score-2" class="text--center"></h3>
+      <h2 id="player-2" class="text--center text--uppercase"></h2>
+    </div>
+  </section>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io(window.location.hostname);
+    var View = function() {};
+
+    View.prototype = {
+      updatePlayers: function(playerOneName, playerTwoName) {
+        document.getElementById('player-1').innerText = playerOneName || '';
+        document.getElementById('player-2').innerText = playerTwoName || '';
+      },
+
+      updateScore: function(playerOneScore, playerTwoScore) {
+        document.getElementById('score-1').innerText = playerOneScore;
+        document.getElementById('score-2').innerText = playerTwoScore;
+      },
+    }
+
+    var Game = function() {
+      this.playerOne = null;
+      this.playerTwo = null;
+      this.score1 = null;
+      this.score2 = null;
+    };
+
+    Game.prototype = {
+      reset: function() {
+        this.player1 = null;
+        this.player2 = null;
+        this.score1 = null;
+        this.score2 = null;
+      },
+
+      isReady: function() {
+        return this.player1 && this.player2;
+      },
+
+      registerPlayer: function(player) {
+        if (this.player1 && this.player2) return;
+        if (!this.player1) {
+          this.player1 = player;
+        } else {
+          this.player2 = player;
+        }
+        if (this.isReady()) {
+          this.score1 = 0;
+          this.score2 = 0;
+        }
+      },
+
+      updateScore: function(player) {
+        if (!this.isReady()) return;
+        if (player == this.player1) {
+          this.score1 = this.score1 + 1;
+        } else {
+          this.score2 = this.score2 + 1;
+        }
+        if (this.isFinished()) {
+          console.log('game finished');
+          this.reset();
+        }
+      },
+
+      isFinished: function() {
+        return this.score1 == 3 || this.score2 == 3;
+      }
+    }
+
+    var view = new View();
+    var game = new Game();
+
+
     socket.on('score', function(payload) {
-      document.getElementById('last-scorer').innerText = payload.player;
+      game.updateScore(payload.player);
+      view.updatePlayers(game.player1, game.player2);
+      view.updateScore(game.score1, game.score2);
     })
+
+    socket.on('join', function(payload) {
+      game.registerPlayer(payload.player);
+      view.updatePlayers(game.player1, game.player2);
+      view.updateScore(game.score1, game.score2);
+    })
+
   </script>
 
 </body>
