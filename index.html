@@ -1,8 +1,14 @@
-
 <body>
   <h1> hello</h1>
+
+  <h2>Last player to score: <span id="last-scorer"></h2>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io(window.location.hostname);
+    socket.on('score', function(payload) {
+      document.getElementById('last-scorer').innerText = payload.player;
+    })
   </script>
+
 </body>

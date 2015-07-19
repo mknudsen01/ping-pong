@@ -18,6 +18,13 @@ app.post('/api/test', function (req, res) {
   res.send('POST request to the homepage');
 });
 
+app.post('/api/score/:player', function(req, res) {
+  var player = req.param('player');
+  io.emit('score', { player: player });
+  console.log(player);
+  res.sendStatus(200)
+})
+
 var server = server.listen(process.env.PORT || 3000, function() {
   console.log('App listening at *3000');
 })
